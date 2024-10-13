@@ -1,0 +1,6 @@
+---
+title: "P8015_hw3_dw3093"
+author: "KatherineWang"
+date: "2024-10-13"
+output: github_document
+---
