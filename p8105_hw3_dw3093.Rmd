@@ -1,6 +1,21 @@
 ---
 title: "P8015_hw3_dw3093"
-author: "KatherineWang"
+author: "Katherine Wang"
 date: "2024-10-13"
 output: github_document
 ---
+```{r setup, include=FALSE}
+  library(p8105.datasets)
+  library(dplyr)
+  library(ggplot2)
+  library(tidyverse)
+  library(patchwork)
+```
+
+
+```{r}
+data("ny_noaa")
+dataset_summary <- list(n_rows = nrow(ny_noaa), n_columns = ncol(ny_noaa), column_names = colnames(ny_noaa))
+view(dataset_summary)
+```
+
