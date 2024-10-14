@@ -4,18 +4,98 @@ author: "Katherine Wang"
 date: "2024-10-13"
 output: github_document
 ---
+
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = TRUE, message = TRUE)
   library(p8105.datasets)
   library(dplyr)
   library(ggplot2)
   library(tidyverse)
   library(patchwork)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
 ```
 
+## Question 1 ##
+```{r include=FALSE}
+data("ny_noaa")
+ny_noaa |> 
+  summary()
+na_counts = colSums(is.na(ny_noaa))
+print(na_counts)
+```
+Summary of the dataset
+This dataset contains `nrow(ny_noaa)` rows and `ncol(ny_noaa)` columns. 
+This dataset contains 2,595,176 rows and 7 columns
+The date of observation, ranging from 1981-01-01 to 2010-12-31.
+
+Key variables include:
+- weather station ID (`id`)
+- date of observation (`date`)
+- precipitation in tenths (mm) (`prcp`)
+- snowfall (mm) (`snow`)
+- snow depth (mm)  (`snwd`)
+- maximum temperature (tenths of degrees C) (`tmax`)
+- minimum temperature (tenths of degrees C) (`tmin`)
+
+The `tmax` and `tmin` are set to be character variables, so they need to converse to numeric variables in the future step.
+
+Through the missing value check, there are a great amount missing (NAs) values as shown on the table:
+     id    date    prcp    snow    snwd    tmax    tmin 
+      0       0  145838  381221  591786 1134358 1134420 
+
+```{r echo=FALSE}
+ny_noaa = 
+  ny_noaa|>
+  mutate(
+    tmax = as.numeric(tmax),
+    tmin = as.numeric(tmin)
+    )
+summary(ny_noaa)
+```
+Convert tmax and tmin to numeric variables.
+
+```{r echo=FALSE}
+ny_noaa = ny_noaa |>
+  mutate(
+    year = year(date),
+    month = month(date),
+    day = day(date),
+    tmax = tmax / 10,  
+    tmin = tmin / 10,   
+    prcp = prcp / 10,   
+  )
+
+com_snowfall = ny_noaa |> 
+  count(snow) |> 
+  arrange(desc(n))
+
+print(com_snowfall)
+```
+The most commonly observed value for snowfall is 0, which indicates that no snowfall occurred on the majority of days in this dataset that is 2,008,508 observations. This is followed by a large number of NAs, totaling 381,221 observations, which suggests that snowfall data was not recorded or available for these entries. Most days in New York State do not experience snowfall, especially during non-winter months. Therefore, it is expected that the majority of observations would record 0 for snowfall, representing days without snow. 
 
 ```{r}
-data("ny_noaa")
-dataset_summary <- list(n_rows = nrow(ny_noaa), n_columns = ncol(ny_noaa), column_names = colnames(ny_noaa))
-view(dataset_summary)
+ny_noaa |>
+  filter(month==1|month==7)|>
+  group_by(id,year,month)|>
+  summarise(avg_tmax = mean(tmax, na.rm = TRUE))|>
+  ggplot(aes(x = year, y=avg_tmax))+
+  geom_point(alpha = .1)+geom_line()+
+  facet_grid(.~month)+
+  labs( title = "Avg. Max Temperature in Jan and Jul by Station",
+    x = "Year",
+    y = "avg. max temperature (°C)")+ 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
 ```
+The two-panel plot shows that avg. max temperatures in January exhibit more variability across stations and years ranging from about -10°C to 10°C, while July temperatures are relatively stable, consistently around 25°C to 35°C. 
+In January more fluctuations are visible, with few potential outliers like the lowest temperature is about 13°C in around 1982. July shows minimal variation, the temperature is quite consistency warm across the years, but still contains few outliers, like the lowest temperature is about 14°C in around 1988.
+
+
+
 
