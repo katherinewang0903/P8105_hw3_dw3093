@@ -87,7 +87,7 @@ ny_noaa |>
   ggplot(aes(x = year, y=avg_tmax))+
   geom_point(alpha = .1)+geom_line()+
   facet_grid(.~month)+
-  labs( title = "Avg. Max Temperature in Jan and Jul by Station",
+  labs( title = "Avg. Max Temperature in Jan and Jul across Years by Station",
     x = "Year",
     y = "avg. max temperature (°C)")+ 
   theme_minimal() + 
@@ -98,7 +98,26 @@ In January more fluctuations are visible, with few potential outliers like the l
 
 
 ```{r}
+ggp_tmax_tmin=
+  ny_noaa|>
+  ggplot(aes(x=tmin, y=tmax))+
+  geom_hex()+
+  labs(
+    x = "minimum temperature(°C)",
+    y = "maximum temperature(°C)",
+    title = "Relationship Between tmax and tmin"
+    )+
+    theme_minimal()
 
+ggp_snow=
+ny_noaa|>
+  filter(snow>0, snow<100)|>
+  ggplot(aes(x = snow, fill = factor(year))) + 
+  geom_density(alpha=.3)+
+  labs(title = "Density of Snowfall by Year", x = "snow depth (mm)", y = "year") +
+  theme_minimal()
+
+ggp_tmax_tmin + ggp_snow
 ```
 
 
