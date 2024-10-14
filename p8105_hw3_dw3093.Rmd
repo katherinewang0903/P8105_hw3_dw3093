@@ -20,6 +20,9 @@ knitr::opts_chunk$set(
   out.width = "90%"
 )
 ```
+```{r}
+
+```
 
 ## Question 1 ##
 ```{r include=FALSE}
@@ -97,5 +100,8 @@ The two-panel plot shows that avg. max temperatures in January exhibit more vari
 In January more fluctuations are visible, with few potential outliers like the lowest temperature is about 13°C in around 1982. July shows minimal variation, the temperature is quite consistency warm across the years, but still contains few outliers, like the lowest temperature is about 14°C in around 1988.
 
 
+```{r}
+
+```
 
 
