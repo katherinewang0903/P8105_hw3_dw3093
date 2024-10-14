@@ -6,10 +6,10 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning = TRUE, message = TRUE)
   library(p8105.datasets)
   library(dplyr)
   library(ggplot2)
+  library(ggridges)
   library(tidyverse)
   library(patchwork)
 knitr::opts_chunk$set(
@@ -91,15 +91,21 @@ The most commonly observed value for snowfall is 0, which indicates that no snow
 
 ```{r}
 ny_noaa |>
-  filter(month==1|month==7)|>
   group_by(id,year,month)|>
+  filter(month %in% c(1, 7)) |>
+  mutate(
+    month = factor(month(date), 
+                   levels = c(1, 7), 
+                   labels = c("January", "July"))
+    ) |>
   summarise(avg_tmax = mean(tmax, na.rm = TRUE))|>
-  ggplot(aes(x = year, y=avg_tmax))+
-  geom_point(alpha = .1)+geom_line()+
+  ggplot(aes(x = year, y = avg_tmax))+
+  geom_point(alpha = .1)+
+  geom_line()+
   facet_grid(.~month)+
-  labs( title = "Avg. Max Temperature in Jan and Jul across Years by Station",
+  labs( title = "Avg. Max Temperature in January and July across Years by Station",
     x = "Year",
-    y = "avg. max temperature (°C)")+ 
+    y = "Avg. Max Temperature (°C)")+ 
   theme_minimal() + 
   theme(legend.position = "bottom")
 ```
@@ -108,29 +114,26 @@ In January more fluctuations are visible, with few potential outliers like the l
 
 
 ```{r}
-ggp_tmax_tmin=
+hexbin_plot=
   ny_noaa|>
-  ggplot(aes(x=tmin, y=tmax))+
+  ggplot(aes(x = tmin, y = tmax))+
   geom_hex()+
   labs(
     x = "minimum temperature(°C)",
     y = "maximum temperature(°C)",
-    title = "Relationship Between tmax and tmin"
     )+
     theme_minimal()
 
-ggp_snow=
-ny_noaa|>
+density_plot = 
+  ny_noaa|>
   filter(snow>0, snow<100)|>
-  ggplot(aes(x = snow, fill = factor(year))) + 
-  geom_density(alpha=.3)+
-  labs(title = "Density of Snowfall by Year", x = "snow depth (mm)", y = "year") +
-  theme_minimal()
+  ggplot(aes(x = snow, y = as.factor(year))) + 
+  geom_density_ridges()
 
-combined_plot =
-  ggp_tmax_tmin + ggp_snow
+combine_plot =
+  hexbin_plot + density_plot
 
-print(combined_plot)
+print(combine_plot)
 ```
 The hexbin plot shows a strong positive relationship between tmax and tmin, with most data points clustered along a diagonal, indicating that higher minimum temperatures are associated with higher maximum temperatures. 
 The ridge plot reveals that most snowfall values fall below 50 mm, with distinct peaks around 25 mm and 75 mm, and some variation in snowfall distributions across years, though the overall pattern remains consistent.
@@ -181,12 +184,12 @@ merged_df |>
   group_by(sex, education) |>
   summarise(count = n(), .groups = "drop") |>
   pivot_wider(
-    names_from = education,
+    names_from = sex,
     values_from = count
     ) |>
   knitr::kable()
 ```
-The table shows that 27 males and 28 females have less than a high school education, 35 males and 23 females have a high school equivalent education, and 56 males and 59 females have more than a high school education. 
+The reader-friendly table shows that 27 males and 28 females have less than a high school education, 35 males and 23 females have a high school equivalent education, and 56 males and 59 females have more than a high school education. 
 
 For the "less than a high school education" and "more than a high school education" categories, the number between males and females is relatively balanced, but for the "high school equivalent education" category, there are much fewer males than females.
 
@@ -211,8 +214,8 @@ merged_df |>
   ) |>
   select(seqn, sex, age, bmi, education, total_activity) |> 
   ggplot(aes(x = age, y = total_activity, color = sex)) + 
-  geom_point(alpha=.5) + 
-  geom_smooth(method = "loess", se = FALSE) + 
+  geom_point(alpha = .5) + 
+  geom_smooth(se = FALSE) + 
   facet_wrap(~education) + 
   labs(
     title = "Total Activity vs. Age by Gender and Education Level", 
@@ -244,6 +247,7 @@ hourly_act <- merged_df |>
 
 ggplot(hourly_act, aes(x = hour, y = activity_level, color = sex)) +
   geom_line(stat = "summary", fun = "mean") +
+  geom_smooth(se = FALSE) +
   facet_wrap(~education) +
   scale_x_continuous(breaks = seq(0, 24, by = 3), 
                      labels = c("12", "3", "6", "9", "12", "15", "18", "21", "24")) +
