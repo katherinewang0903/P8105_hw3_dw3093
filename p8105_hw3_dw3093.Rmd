@@ -109,6 +109,7 @@ ny_noaa |>
   theme_minimal() + 
   theme(legend.position = "top")
 ```
+```
 The two-panel plot shows that avg. max temperatures in January exhibit more variability across stations and years ranging from about -10°C to 10°C, while July temperatures are relatively stable, consistently around 25°C to 35°C. 
 In January more fluctuations are visible, with few potential outliers like the lowest temperature is about 13°C in around 1982. July shows minimal variation, the temperature is quite consistency warm across the years, but still contains few outliers, like the lowest temperature is about 14°C in around 1988.
 
@@ -122,7 +123,7 @@ hexbin_plot=
     x = "minimum temperature(°C)",
     y = "maximum temperature(°C)",
     )+
-    theme(legend.position = "bottom")
+    theme_minimal()
 
 density_plot = 
   ny_noaa|>
