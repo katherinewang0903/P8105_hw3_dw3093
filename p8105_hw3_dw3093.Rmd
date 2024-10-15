@@ -12,23 +12,6 @@ output: github_document
   library(ggridges)
   library(tidyverse)
   library(patchwork)
-knitr::opts_chunk$set(
-	echo = TRUE,
-	warning = FALSE,
-	fig.width = 6, 
-  fig.height = 6,
-  out.width = "90%"
-)
-
-theme_set(theme_minimal() + theme(legend.position = "bottom"))
-
-options(
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis"
-)
-
-scale_colour_discrete = scale_colour_viridis_d
-scale_fill_discrete = scale_fill_viridis_d
 ```
 
 ## Question 1 ##
@@ -109,7 +92,6 @@ ny_noaa |>
   theme_minimal() + 
   theme(legend.position = "top")
 ```
-```
 The two-panel plot shows that avg. max temperatures in January exhibit more variability across stations and years ranging from about -10°C to 10°C, while July temperatures are relatively stable, consistently around 25°C to 35°C. 
 In January more fluctuations are visible, with few potential outliers like the lowest temperature is about 13°C in around 1982. July shows minimal variation, the temperature is quite consistency warm across the years, but still contains few outliers, like the lowest temperature is about 14°C in around 1988.
 
@@ -133,7 +115,7 @@ density_plot =
 
 combine_plot =
   hexbin_plot + density_plot
-
+ 
 print(combine_plot)
 ```
 The hexbin plot shows a strong positive relationship between tmax and tmin, with most data points clustered along a diagonal, indicating that higher minimum temperatures are associated with higher maximum temperatures. 
@@ -141,7 +123,7 @@ The ridge plot reveals that most snowfall values fall below 50 mm, with distinct
 
 ## Question 2 ##
 #load, clean, and tidy 'nhanes_covar' dataset
-```{r include=FALSE}
+```{r, include=FALSE}
 covar = 
   read_csv("~/P8105_hw3_dw3093/HW3Q2data/nhanes_covar.csv", 
            skip = 4, 
@@ -164,7 +146,7 @@ covar =
 ```
 
 #load, clean, and tidy 'nhanes_accel' dataset
-```{r include=FALSE}
+```{r, include=FALSE}
 accel = 
   read_csv("~/P8105_hw3_dw3093/HW3Q2data/nhanes_accel.csv", 
            na = c("NA",".", "")
