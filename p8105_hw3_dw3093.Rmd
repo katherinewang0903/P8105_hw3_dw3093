@@ -187,15 +187,27 @@ For the "less than a high school education" and "more than a high school educati
 #create a visualization of the age distributions for men and women in each education category
 ```{r}
 merged_df |>
-  ggplot(aes(x = sex, y = age, fill = education)) +
-  geom_boxplot()+
-  facet_grid(. ~ education) +
-  labs(title = "Age Distribution by Gender and Education", 
-       x = "Sex", 
-       y = "Age (year)")+
-   theme_minimal()
+  ggplot(aes(x = age, fill = sex)) +
+  geom_density(alpha = 0.4)+
+  facet_grid(.~education) +
+  labs(title = "Age Distribution by Gender and Education Category", 
+       x = "Age", 
+       y = "Density",
+       fill = "Sex"
+       )+
+   theme_minimal()+
+  theme(legend.position = "bottom")
 ```
-The box plot shows that participants with less than a high school education are older, with both males and females having a similar median age around 60 years and a narrow age range. In the high school equivalent category, males tend to have a slightly higher median age compared to females, and both genders show a broader age range, with males having a particularly widespread from their 20s to 80s. In the more than high school category, males and females have similar age distributions, both with a median age of around 60 years, though females exhibit a slightly broader range. 
+
+The plot shows the age distribution by gender across three education categories. 
+
+Across all categories, females tend to cluster in older age ranges (60-80), especially in the higher education group, while males (purple) show a more even spread across ages. 
+
+In the less than high school group, both genders peak around ages 60-70, with more females in the older range. 
+
+The high school equivalent group shows a bimodal pattern for males (peaks at 40 and 60) but a more consistent peak for females in older ages. 
+
+In the more than high school group, females concentrate between 60-70, while males have a broader age spread, especially in 20-40. 
 
 # Plot total activities vs. age
 ```{r}
@@ -220,8 +232,11 @@ merged_df |>
 ```
 
 - In the "less than high school" group, females initially have higher activity levels, but their activity sharply declines after age 60, eventually falling below that of males, who show a more gradual decline with age. 
+
 - In the "high school equivalent" group, females are more active than males at younger ages, but their activity decreases more steeply after age 50, converging with male levels by age 60. Males exhibit a steadier decline across age in this group. 
+
 - In the "high school equivalent" and "more than high school" groups, females have notably higher activity in their 20s and 30s but diminish by age 60, where male and female activity levels converge and decline together. 
+
 - Overall, females tend to be more active in their younger years, while males experience more gradual decreases in activity, often maintaining higher levels in older age, particularly in the lower education groups, which indicates that both gender and education influence activity trends as people age.
 
 #create a three-panel plot that shows the 24-hour activity time courses for each education level
@@ -238,20 +253,20 @@ hourly_act <- merged_df |>
 
 ggplot(hourly_act, aes(x = hour, y = activity_level, color = sex)) +
   geom_line(stat = "summary", fun = "mean") +
-  geom_smooth(se = FALSE) +
+  geom_smooth(aes(group = sex), se = FALSE) +
   facet_wrap(~education) +
   scale_x_continuous(breaks = seq(0, 24, by = 3), 
                      labels = c("12", "3", "6", "9", "12", "15", "18", "21", "24")) +
   labs(
     title = "24-Hour Activity Time Courses by Education and Gender", 
     x = "Hour of the Day (24-hour Clock)", 
-    y = "Avg. Activity Level"
+    y = "Mean Activity"
   ) +
   theme_minimal() +
   theme(legend.position = "bottom")
 ```
 The graph shows 24-hour activity patterns for men and women across different education levels. Across both male and female groups, there is a sharp increase in activity in the morning (around 6-9), peaking between 9 and 12 am, followed by a gradual decline in the afternoon and a smaller peak in the afternoon (around 15-18). Activity levels significantly drop off after 21 and remain low during nighttime hours. Females consistently show higher average activity levels compared to males throughout the day, especially during the peak activity periods. While the overall patterns are similar across education levels, individuals with less than a high school education tend to have slightly lower activity levels, and those with higher education exhibit more sustained and pronounced morning peaks. 
-In conclusion: the trends suggest that both gender and education influence daily activity patterns, with females generally being more active and higher education associated with slightly higher and longer-lasting activity peaks during the day.
+
 
 ## Question 3 ##
 Import and tidy 4 datasets
@@ -330,7 +345,7 @@ citi_jul24 |>
 The 5 most popular starting stations for July 2024 table shows that Pier 61 at Chelsea Piers saw the highest number of rides, 163. It is followed by University Pl & E 14 St, with 155 rides, W 21 St & 6 Ave, with 152 rides, and West St & Chambers St, with 150 rides. The fifth most popular station is W 31 St & 7 Ave, with 146 rides.
 
 #Make a plot to investigate the effects of day of the week, month, and year on median ride duration
-```{r, fig.width=6, fig.height=4}
+```{r}
  citi_merged|> 
   mutate(weekdays = factor(weekdays, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")))|>
   group_by(year, month, weekdays) |> 
@@ -351,6 +366,7 @@ The 5 most popular starting stations for July 2024 table shows that Pier 61 at C
         legend.position = "bottom")
 ```
 The plot shows that in both 2020 and 2024, July consistently has longer median ride durations compared to January, with July rides peaking on weekends, especially on Sundays (around 15-17 minutes), which is likely due to warmer weather, making cycling more appealing and leading to longer rides. 
+
 In contrast, January rides are shorter, staying fairly stable across weekdays, ranging between 7.5 to 10 minutes. Both years show a pattern of longer rides on weekends for July, indicating that riders tend to take longer leisure rides on weekends, whereas January rides are likely more commuter-focused and uniform across the week. The trends from 2020 to 2024 are quite similar, suggesting steady Citi Bike usage patterns over time.
 
 #make a figure that shows the impact of month, membership status, and bike type on the distribution of ride duration for data in 2024
@@ -373,4 +389,8 @@ citi_merged |>
     legend.position = "none",
   )
 ```
+July has longer ride durations compared to January across all bike types and membership categories, which is likely due to warm weather being more suitable for cycling.
 
+Casual riders tend to have longer ride durations compared to members. This is particularly noticeable for both classic and electric bikes, where casual riders' distributions show longer tails, indicating a higher frequency of longer rides. Members have a more concentrated distribution with shorter rides, especially for electric bikes. 
+
+Electric bikes generally have longer ride durations than classic bikes, as shown by the distributions having longer tails. 
