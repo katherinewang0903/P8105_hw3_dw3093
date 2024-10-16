@@ -252,7 +252,7 @@ hourly_act <- merged_df |>
          hour = minute / 60)
 
 ggplot(hourly_act, aes(x = hour, y = activity_level, color = sex)) +
-  geom_line(stat = "summary", fun = "mean") +
+  geom_line(alpha=.1) +
   geom_smooth(aes(group = sex), se = FALSE) +
   facet_wrap(~education) +
   scale_x_continuous(breaks = seq(0, 24, by = 3), 
@@ -263,7 +263,7 @@ ggplot(hourly_act, aes(x = hour, y = activity_level, color = sex)) +
     y = "Mean Activity"
   ) +
   theme_minimal() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "top")
 ```
 The graph shows 24-hour activity patterns for men and women across different education levels. Across both male and female groups, there is a sharp increase in activity in the morning (around 6-9), peaking between 9 and 12 am, followed by a gradual decline in the afternoon and a smaller peak in the afternoon (around 15-18). Activity levels significantly drop off after 21 and remain low during nighttime hours. Females consistently show higher average activity levels compared to males throughout the day, especially during the peak activity periods. While the overall patterns are similar across education levels, individuals with less than a high school education tend to have slightly lower activity levels, and those with higher education exhibit more sustained and pronounced morning peaks. 
 
